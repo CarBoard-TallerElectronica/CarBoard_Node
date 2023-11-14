@@ -15,6 +15,7 @@ class ConnecT
     void setWebServer(int port);
     void addGETtoWeb(String path, void (*function)());
     void addPUTtoWeb(String path, void (*function)());
+    void addPOSTtoWeb(String path, void (*function)());
     WebServer* getServerPointer();
   private:
     WebServer* _serverPointer;

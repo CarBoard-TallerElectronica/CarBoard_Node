@@ -10,12 +10,14 @@ char buffer[1200];
 Preferences* _preferences;
 
 //Funciones de manejo JSON Auxiliares
-void create_json(char *tag, float value, char *unit) {  
+void create_json(float node, float latitude, float longitude, float speed, float acce) {  
   jsonDocument.clear();
-  jsonDocument["type"] = tag;
-  jsonDocument["value"] = value;
-  jsonDocument["unit"] = unit;
-  serializeJson(jsonDocument, buffer);  
+  jsonDocument["nodo"] = node;
+  jsonDocument["latitud"] = latitude;
+  jsonDocument["longitud"] = longitude;
+  jsonDocument["velocidad"] = speed;
+  jsonDocument["aceleracion"] = acce;
+ 
 }
 
 
@@ -26,16 +28,11 @@ namespace CarBoardREST{
 
     float *_latitude;
     float *_longitude;
+    float *_azimuth;
 
     float *_acceleration;
     float *_speed;
    
-    void add_json_object(char *tag, float value, char *unit) {
-        JsonObject obj = jsonDocument.createNestedObject();
-        obj["type"] = tag;
-        obj["value"] = value;
-        obj["unit"] = unit; 
-    }
 
     void setBufferSize(int bufferSize){
         _bufferSize = bufferSize;
@@ -45,21 +42,30 @@ namespace CarBoardREST{
         _serverPointer = serverPointer;
     }
 
-    //Métodos GET
-    void GETAll(){
+    void linkAzimuth(float* azimuth){
+        _azimuth = azimuth;
+    }
+
+   void linkAcce(float* acce){
+        _acceleration = acce;
+    }
+   void linkSpeed(float* speed){
+        _speed = speed;
+    }
+   void linkLatitude(float* latitude){
+        _latitude = latitude;
+    }
+   void linkLongitude(float* longitude){
+        _longitude = longitude;
+    }
+
+    //Métodos POST
+    char* postContent(){
       jsonDocument.clear();
-
-      //Posición
-      add_json_object("longitud", (*_longitude), "GMS");
-      add_json_object("latitud", (*_latitude), "GMS");
-
-      //Aceleración y velocidad
-      add_json_object("acceleration", (*_acceleration), "m/s2");
-      add_json_object("speed", (*_speed), "Km/h");
-
+      create_json(1, (*_latitude), (*_longitude), (*_speed), (*_acceleration));
       serializeJson(jsonDocument, buffer); 
-      (*_serverPointer).send(200, "application/json", buffer);
-  }
+      return buffer;
+    }
 
 
     //Métodos PUT

@@ -83,6 +83,10 @@ void ConnecT::addGETtoWeb(String path, void (*function)()){
   _serverPointer->on(path, HTTP_GET, *function);
 }
 
+void ConnecT::addPOSTtoWeb(String path, void (*function)()){
+  _serverPointer->on(path, HTTP_POST, *function);
+}
+
 void ConnecT::addPUTtoWeb(String path, void (*function)()){
   _serverPointer->on(path, HTTP_OPTIONS, *function);
   _serverPointer->on(path, HTTP_PUT, *function);
