@@ -49,7 +49,9 @@ const char* rootCACertificate = \
 
 const char* serverName = "https://carboard.lat/measurement/log/";
 unsigned long lastTime_serve = 0;
+unsigned long lastTime_mpu = 0;
 unsigned long timerDelay_serve = 4000;
+unsigned long timerDelay_mpu = 100;
 
 
 // ### PINES ### //
@@ -83,6 +85,9 @@ uint8_t hour = 0;
 uint8_t minute = 0;
 uint8_t second = 0;
    
+sensors_event_t accel;
+sensors_event_t gyro;
+sensors_event_t temp;
 
 // ### Objetos ### //
 ConnecT connecT; // Instancia de la clase ConnecT: Permite la conexión a internet y la comunicación con el servidor web
@@ -187,19 +192,19 @@ void loop() {
   compass.read();
   azimuth = compass.getAzimuth();
   
-  // Lectura del MPU
-  sensors_event_t accel;
-  sensors_event_t gyro;
-  sensors_event_t temp;
-  mpu_temp->getEvent(&temp);
-  mpu_accel->getEvent(&accel);
-  mpu_gyro->getEvent(&gyro);
 
-  acce_x = accel.acceleration.x;
-  acce_y = accel.acceleration.y;
-  acce_z = accel.acceleration.z;
-  acceleration = sqrt(pow(acce_x, 2) + pow(acce_y, 2) + pow(acce_z, 2));
+  if ((millis() - lastTime_mpu) > timerDelay_mpu) {
+    // Lectura del MPU
+    mpu_temp->getEvent(&temp);
+    mpu_accel->getEvent(&accel);
+    mpu_gyro->getEvent(&gyro);
 
+    acce_x = accel.acceleration.x;
+    acce_y = accel.acceleration.y;
+    acce_z = accel.acceleration.z;
+    acceleration = sqrt(pow(acce_x, 2) + pow(acce_y, 2) + pow(acce_z, 2));
+    lastTime_mpu= millis();
+  }
 
 
   //Listen requests
