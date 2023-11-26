@@ -3,6 +3,9 @@
 #include <ArduinoJson.h>
 #include <Preferences.h>
 #include <ConnecT.h>
+#include <Preferences.h>
+
+Preferences preferences; // Instancia de la clase Preferences: Permite el almacenamiento de datos en la memoria flash
 
 // JSON data buffer
 StaticJsonDocument<1200> jsonDocument;
@@ -127,11 +130,13 @@ namespace CarBoardREST{
         Serial.println("SSID: " + ssid);
         Serial.println("Password: " + password);
 
-    
         ssid.toCharArray(_ssid, ssid.length() + 1);
         password.toCharArray(_password, password.length() + 1);
 
         connecT2.setWiFi_STA(_ssid, _password);
+
+        preferences.putString("ssid", _ssid);
+        preferences.putString("password", _password);
     }
 
 

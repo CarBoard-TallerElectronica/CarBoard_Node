@@ -9,6 +9,8 @@
 #include <SparkFun_u-blox_GNSS_Arduino_Library.h> 
 #include <HTTPClient.h>
 #include <WiFiClientSecure.h>
+#include <Preferences.h>
+
 SFE_UBLOX_GNSS gps;
 
 
@@ -65,7 +67,7 @@ unsigned long timerDelay_mpu = 100;
 
 // ### Variables ### //
 char ssid[20];
-char password[20] ;
+char password[20];
 
 int32_t latitude = 0;
 int32_t longitude = 0;
@@ -99,13 +101,14 @@ Adafruit_SSD1306 display = Adafruit_SSD1306(128, 64, &Wire);
 QMC5883LCompass compass;
 Adafruit_Sensor *mpu_temp, *mpu_accel, *mpu_gyro;
 
-
 // ### Funciones de setUp ### //
 
 // ### Funciones auxiliares ### //
 void setup() {
 
   Serial.begin(COMPUTER_BAUDRATE);
+
+   preferences.begin("carboard", false);  // Se inicia la memoria flash
 
   //## Inicialización de los sensores
 
@@ -133,6 +136,13 @@ void setup() {
   // ## Inicialización del WiFi
   connecT.setDualMode();
   connecT.setWiFi_AP("CarBoard", "carboard");
+
+  if(preferences.isKey("ssid")){ // Se revisa si hay un SSID guardado
+      preferences.getString("ssid", ssid, 20);
+      preferences.getString("password", password, 20);
+      connecT.setWiFi_STA(ssid, password);
+   }
+
   connecT.setWebServer(80); // Creación del servidor web en el puerto 80
 
   /* Se vinculan los apuntadores de los arrays de medición al protocolo REST */
