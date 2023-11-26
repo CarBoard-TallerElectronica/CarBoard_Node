@@ -49,7 +49,7 @@ const char* rootCACertificate = \
 
 const char* serverName = "https://carboard.lat/measurement/log/";
 unsigned long lastTime_serve = 0;
-unsigned long timerDelay_serve = 5000;
+unsigned long timerDelay_serve = 1000;
 
 
 // ### PINES ### //
@@ -75,7 +75,6 @@ int azimuth = 0;
 uint32_t speed = 0;
 
 uint16_t position_dop = 0;
-uint32_t weekTime = 0;
 
 uint16_t year = 0;
 uint8_t month = 0;
@@ -185,7 +184,7 @@ void loop() {
 
   //Tiempo del GPS
   year = gps.getYear();
-  month - gps.getMonth();
+  month = gps.getMonth();
   day = gps.getDay();
   hour = gps.getHour();
   minute = gps.getMinute();
@@ -270,12 +269,9 @@ void loop() {
 
   display.setCursor(0,50);
   display.print("Time: ");
-  display.print(weekTime);
-
-
-
+  display.print(month);
   display.display();
-  Serial.println("Loop");	
+
 
 
   }

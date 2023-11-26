@@ -100,7 +100,7 @@ namespace CarBoardREST{
     //Métodos POST
     char* postContent(){
       jsonDocument.clear();
-      create_json(1, (*_latitude), (*_longitude), (*_speed), (*_acceleration), (*_azimuth), (*_positionDOP), (*_year), (*_month), (*_day), (*_hour), (*_minute), (*_second));
+      create_json(28, (*_latitude), (*_longitude), (*_speed), (*_acceleration), (*_azimuth), (*_positionDOP), (*_year), (*_month), (*_day), (*_hour), (*_minute), (*_second));
       serializeJson(jsonDocument, buffer); 
       return buffer;
     }
