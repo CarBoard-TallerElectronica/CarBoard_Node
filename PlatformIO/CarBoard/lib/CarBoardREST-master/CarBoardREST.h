@@ -2,11 +2,14 @@
 #include <WebServer.h>
 #include <ArduinoJson.h>
 #include <Preferences.h>
+#include <ConnecT.h>
 
 // JSON data buffer
 StaticJsonDocument<1200> jsonDocument;
 StaticJsonDocument<600> timeDocument;
 char buffer[1200];
+
+ConnecT connecT2; // Instancia de la clase ConnecT: Permite la conexión a internet y la comunicación con el servidor web
 
 Preferences* _preferences;
 
@@ -123,7 +126,12 @@ namespace CarBoardREST{
 
         Serial.println("SSID: " + ssid);
         Serial.println("Password: " + password);
-        
+
+    
+        ssid.toCharArray(_ssid, ssid.length() + 1);
+        password.toCharArray(_password, password.length() + 1);
+
+        connecT2.setWiFi_STA(_ssid, _password);
     }
 
 

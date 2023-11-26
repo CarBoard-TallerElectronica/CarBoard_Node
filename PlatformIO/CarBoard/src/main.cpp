@@ -64,6 +64,9 @@ unsigned long timerDelay_mpu = 100;
 #define GPS_BAUDRATE 9600
 
 // ### Variables ### //
+char ssid[20];
+char password[20] ;
+
 int32_t latitude = 0;
 int32_t longitude = 0;
 
@@ -130,7 +133,6 @@ void setup() {
   // ## Inicialización del WiFi
   connecT.setDualMode();
   connecT.setWiFi_AP("CarBoard", "carboard");
-  connecT.setWiFi_STA("COMPETENCE", "Mafu2408");
   connecT.setWebServer(80); // Creación del servidor web en el puerto 80
 
   /* Se vinculan los apuntadores de los arrays de medición al protocolo REST */
@@ -144,6 +146,8 @@ void setup() {
 
   CarBoardREST::linkPositionDOP(&position_dop);
   CarBoardREST::linkTime(&year, &month, &day, &hour, &minute, &second);
+
+  CarBoardREST::linkWifi(ssid, password);
 
   display.clearDisplay();
   display.display();
@@ -212,9 +216,10 @@ void loop() {
 
 
 
+  //Revisamos si hay un SSID
   
   //POST TO SERVER
-  if ((millis() - lastTime_serve) > timerDelay_serve) {
+  if ((millis() - lastTime_serve) > timerDelay_serve){
 
 
     // Lectura del GPS
