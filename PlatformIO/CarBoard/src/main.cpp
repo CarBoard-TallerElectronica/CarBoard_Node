@@ -49,7 +49,7 @@ const char* rootCACertificate = \
 
 const char* serverName = "https://carboard.lat/measurement/log/";
 unsigned long lastTime_serve = 0;
-unsigned long timerDelay_serve = 1000;
+unsigned long timerDelay_serve = 4000;
 
 
 // ### PINES ### //
@@ -114,8 +114,7 @@ void setup() {
 
   pinMode(LED_BUILTIN, OUTPUT);
 
-  //# Compass config
-  compass.init();
+
 
   // # GPS Config
   Serial0.begin(GPS_BAUDRATE);
@@ -166,6 +165,14 @@ void setup() {
   mpu_gyro = mpu.getGyroSensor();
   mpu_gyro->printSensorDetails();
 
+
+  //# Compass config
+  compass.init();
+
+  //WebServer Paths
+  connecT.addPOSTtoWeb("/wifi-info", CarBoardREST::POSTWifi);
+
+
   (connecT.getServerPointer())->begin(); //Init webserver
 
 }
@@ -175,20 +182,6 @@ void loop() {
 
   // Loop Led
   digitalWrite(LED_BUILTIN, HIGH);
-
-  // Lectura del GPS
-  latitude = gps.getLatitude();
-  longitude = gps.getLongitude();
-  speed = gps.getGroundSpeed();
-  position_dop = gps.getPositionDOP();
-
-  //Tiempo del GPS
-  year = gps.getYear();
-  month = gps.getMonth();
-  day = gps.getDay();
-  hour = gps.getHour();
-  minute = gps.getMinute();
-  second = gps.getSecond();
 
   // Lectura del compás
   compass.read();
@@ -212,9 +205,26 @@ void loop() {
   //Listen requests
   (connecT.getServerPointer())->handleClient();
 
+
+
   
   //POST TO SERVER
   if ((millis() - lastTime_serve) > timerDelay_serve) {
+
+
+    // Lectura del GPS
+    latitude = gps.getLatitude();
+    longitude = gps.getLongitude();
+    speed = gps.getGroundSpeed();
+    position_dop = gps.getPositionDOP();
+
+    //Tiempo del GPS
+    year = gps.getYear();
+    month = gps.getMonth();
+    day = gps.getDay();
+    hour = gps.getHour();
+    minute = gps.getMinute();
+    second = gps.getSecond();
 
     //Secure
     WiFiClientSecure *client = new WiFiClientSecure;

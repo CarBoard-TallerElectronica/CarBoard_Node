@@ -37,6 +37,10 @@ void create_json(float node, float latitude, float longitude, uint32_t speed, fl
 
 namespace CarBoardREST{
 
+    //WiFi Info
+    char* _ssid;
+    char* _password;
+
     WebServer* _serverPointer;
     int _bufferSize;
 
@@ -87,6 +91,11 @@ namespace CarBoardREST{
           _positionDOP = positionDOP;
      }
 
+    void linkWifi(char* ssid, char* password){
+        _ssid = ssid;
+        _password = password;
+    }
+
 
      void linkTime(uint16_t* year, uint8_t* month, uint8_t* day, uint8_t* hour, uint8_t* minute, uint8_t* second){
           _year = year;
@@ -98,6 +107,26 @@ namespace CarBoardREST{
      }
 
     //Métodos POST
+    void POSTWifi(){
+        jsonDocument.clear(); // Clear the JSON document before populating it
+
+        if ((*_serverPointer).hasArg("plain") == false) {
+        Serial.println("Esperaba un float, recibí: nada.");
+        }
+        String body = (*_serverPointer).arg("plain");
+        deserializeJson(jsonDocument, body);
+        
+        //Obtener step nuevo
+        String ssid = jsonDocument["ssid"];
+        String password =  jsonDocument["password"];
+        (*_serverPointer).send(200, "application/json", "{\"status\": \"ok\"}");
+
+        Serial.println("SSID: " + ssid);
+        Serial.println("Password: " + password);
+        
+    }
+
+
     char* postContent(){
       jsonDocument.clear();
       create_json(28, (*_latitude), (*_longitude), (*_speed), (*_acceleration), (*_azimuth), (*_positionDOP), (*_year), (*_month), (*_day), (*_hour), (*_minute), (*_second));
